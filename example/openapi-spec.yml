@@ -1,0 +1,50 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Falcon Openapi Demo
+  license:
+    name: MIT
+servers:
+  - url: http://localhost/v1
+paths:
+  /foo:
+    get:
+      summary: Do foo things
+      operationId: controllers.foo.Foo.on_get
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Foo"
+    post:
+      summary: Do foo things
+      x-falcon-router:
+        module: controllers.foo
+        class: Foo
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Foo"
+components:
+  schemas:
+    Foo:
+      properties:
+        bar:
+          type: string
+        baz:
+          type: string
