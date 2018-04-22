@@ -22,7 +22,7 @@ class OpenApiRouter(CompiledRouter):
                     (dest_module,
                     dest_method, 
                     dest_class,
-                    dest_file) = self._get_destination_info(definition, http_method)
+                    dest_file) = self.__get_destination_info(definition, http_method)
                 except:
                     continue
 
@@ -50,7 +50,7 @@ class OpenApiRouter(CompiledRouter):
                 self.add_route(path, method_map, Class)
     
     @staticmethod
-    def _get_destination_info(definition, fallback):
+    def __get_destination_info(definition, fallback):
         """Gets destination module, class, method, and filename from openapi 
         method definition. Looks for either operationId or x-falcon-router 
         properties. If both are defined operationId takes precedence.
