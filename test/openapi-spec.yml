@@ -40,6 +40,24 @@ paths:
             application/json:    
               schema:
                 $ref: "#/components/schemas/Foo"
+    put:
+      summary: Do foo things
+      x-falcon-router:
+        module: controllers.foo
+        class: Foo
+        method: do_a_put
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Foo"
 components:
   schemas:
     Foo:
