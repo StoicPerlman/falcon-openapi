@@ -16,18 +16,41 @@ python3 setup.py install
 
 Reads an openapi spec and provides automatic routing to Falcon resources. This is achieved by defining either an operationId or x-falcon-router property on an endpoint. This removes the need to define all endpoints in your main Falcon file. Instead just set the router to OpenApiRouter.
 
-Currently supports json and yaml files. If no openapi file is specified the plugin will attempt to find `openapi-spec.yml` in the same directory.
+This router inherits from the default Falcon CompiledRouter class, so it supports all methods available to the default router.
+
+Supports json files, yaml files, raw json strings, and raw yaml strings. If no params are specified the plugin will attempt to find `openapi-spec.yml` in the same directory.
 
 ```python
 import falcon
+import json
+import yaml
 from falcon_openapi import OpenApiRouter
 
+spec = {
+    'paths': {
+        '/foo': {
+            'get': {
+                'operationId': 'controllers.foo.Foo.on_get'
+            }
+        }
+    }
+}
+
+# load from file
 app = falcon.API(
-    router=OpenApiRouter(openapi='openapi-spec.yml')
+    router=OpenApiRouter(file_path='openapi-spec.yml')
+)
+
+# load from raw json
+app = falcon.API(
+    router=OpenApiRouter(raw_json=json.dumps(spec))
+)
+
+# load from raw yaml
+app = falcon.API(
+    router=OpenApiRouter(raw_yaml=yaml.dump(spec))
 )
 ```
-
-This router inherits from the default Falcon CompiledRouter class, so it supports all methods available to the default router.
 
 ### operationId
 
