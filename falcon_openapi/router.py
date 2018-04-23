@@ -6,15 +6,21 @@ from importlib.util import spec_from_file_location, module_from_spec
 from falcon.routing.compiled import CompiledRouter
 
 class OpenApiRouter(CompiledRouter):
-    def __init__(self, openapi='openapi-spec.yml'):
+    def __init__(self, file_path='openapi-spec.yml', raw_json='', raw_yaml=''):
         super().__init__()
 
-        if openapi.endswith('json'):
-            spec = json.load(open(openapi))
+        if raw_json != '':
+            self.openapi = json.loads(raw_json)
+        elif raw_yaml != '':
+            self.openapi = yaml.load(raw_yaml)
         else:
-            spec = yaml.load(open(openapi))
+            with open(file_path) as f:
+                if file_path.endswith('json'):
+                        self.openapi = json.load(f)
+                else:
+                    self.openapi = yaml.load(f)
 
-        for path, http_methods in spec['paths'].items():
+        for path, http_methods in self.openapi['paths'].items():
             openapi_map = {}
 
             for http_method, definition in http_methods.items():
