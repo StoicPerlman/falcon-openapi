@@ -2,7 +2,7 @@
 from setuptools import setup
 
 setup(
-    name='Falcon OpenApi',
+    name='falcon-openapi',
     python_requires='>3.5.0',
     version='0.1.0',
     description='Falcon router to map openapi spec to resources',
