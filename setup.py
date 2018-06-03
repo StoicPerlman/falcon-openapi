@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='Falcon OpenApi',
@@ -8,5 +8,14 @@ setup(
     author='Sam Kleiner',
     author_email='sam@skleiner.com',
     url='https://github.com/StoicPerlman/falcon-openapi/',
-    packages=['falcon_openapi']
+    packages=['falcon_openapi'],
+    install_requires=[
+        'falcon',
+        'pyyaml'
+    ],
+    extras_require={
+        'dev': [
+            'unittest'
+        ]
+    }
 )
