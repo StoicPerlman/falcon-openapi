@@ -4,12 +4,8 @@ Falcon OpenApi is a set of plugins for the [Falcon Web Framework](https://github
 
 ### Install
 
-Not yet on pypi.
-
 ```bash
-git clone https://github.com/StoicPerlman/falcon-openapi.git
-cd falcon-openapi
-python3 setup.py install
+pip3 install falcon-openapi
 ```
 
 ## OpenApi Router
