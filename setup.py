@@ -10,14 +10,14 @@ with open('LICENSE') as f:
 setup(
     name='falcon-openapi',
     python_requires='>3.5.0',
-    version='0.1.0',
+    version='0.1.1',
     description='Falcon router to map openapi spec to resources',
     long_description=readme,
     author='Sam Kleiner',
     author_email='sam@skleiner.com',
     license=license,
     url='https://github.com/StoicPerlman/falcon-openapi/',
-    download_url = 'https://github.com/StoicPerlman/falcon-openapi/archive/0.1.0.tar.gz',
+    download_url = 'https://github.com/StoicPerlman/falcon-openapi/archive/0.1.1.tar.gz',
     keywords = ['falcon', 'openapi', 'api'],
     packages=['falcon_openapi'],
     install_requires=[
