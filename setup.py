@@ -24,7 +24,7 @@ setup(
     ],
     extras_require={
         'dev': [
-            'unittest'
+            'pytest'
         ]
     }
 )

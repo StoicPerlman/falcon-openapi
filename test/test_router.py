@@ -1,27 +1,32 @@
 import json
 import yaml
-import unittest
+import pytest
 
+import os
 import sys
 sys.path.insert(0, '..')
 from falcon_openapi import OpenApiRouter
 
-class TestResponse():
-    def __init__(self):
-        self.json = ''
-        self.status = ''
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
 
-class TestRouter(unittest.TestCase):
+class TestResponse():
+    json = ''
+    status = ''
+
+class TestRouter():
 
     def test_file_path(self):
         router = OpenApiRouter()
         (resource, method_map, _, uri) = router.find('/foo')
-        self.assertTrue('controllers.foo.Foo' in str(resource))
 
-        self.assertEqual(len(method_map), 3)
-        self.assertTrue('GET' in method_map)
-        self.assertTrue('POST' in method_map)
-        self.assertTrue('PUT' in method_map)
+        assert 'controllers.foo.Foo' in str(resource)
+
+        assert len(method_map) == 3
+        assert 'GET' in method_map
+        assert 'POST' in method_map
+        assert 'PUT' in method_map
 
         get_method = method_map['GET']
         post_method = method_map['POST']
@@ -35,15 +40,15 @@ class TestRouter(unittest.TestCase):
         post_method({}, post_resp)
         put_method({}, put_resp)
 
-        self.assertEqual(get_resp.status, '200 OK')
-        self.assertEqual(post_resp.status, '200 OK')
-        self.assertEqual(put_resp.status, "418 I'm a teapot")
+        assert get_resp.status == '200 OK'
+        assert post_resp.status == '200 OK'
+        assert put_resp.status == "418 I'm a teapot"
 
-        self.assertEqual(get_resp.json, {"method": "get"})
-        self.assertEqual(post_resp.json, {"method": "post"})
-        self.assertEqual(put_resp.json, {"method": "put"})
+        assert get_resp.json == {"method": "get"}
+        assert post_resp.json == {"method": "post"}
+        assert put_resp.json == {"method": "put"}
 
-        self.assertEqual(uri, '/foo')
+        assert uri == '/foo'
     
     def test_raw_json(self):
         spec = {
@@ -58,17 +63,19 @@ class TestRouter(unittest.TestCase):
 
         router = OpenApiRouter(raw_json=json.dumps(spec))
         (resource, method_map, _, uri) = router.find('/foo')
-        self.assertTrue('controllers.foo.Foo' in str(resource))
-        self.assertEqual(len(method_map), 1)
-        self.assertTrue('GET' in method_map)
+
+        assert 'controllers.foo.Foo' in str(resource)
+        assert len(method_map) == 1
+        assert 'GET' in method_map
 
         get_method = method_map['GET']
         get_resp = TestResponse()
         get_method({}, get_resp)
-        self.assertEqual(get_resp.status, '200 OK')
-        self.assertEqual(get_resp.json, {"method": "get"})
 
-        self.assertEqual(uri, '/foo')
+        assert get_resp.status == '200 OK'
+        assert get_resp.json == {"method": "get"}
+
+        assert uri == '/foo'
 
     def test_raw_yaml(self):
         spec = {
@@ -83,17 +90,17 @@ class TestRouter(unittest.TestCase):
 
         router = OpenApiRouter(raw_yaml=yaml.dump(spec))
         (resource, method_map, _, uri) = router.find('/foo')
-        self.assertTrue('controllers.foo.Foo' in str(resource))
+
+        assert 'controllers.foo.Foo' in str(resource)
         
-        self.assertEqual(len(method_map), 1)
-        self.assertTrue('GET' in method_map)
+        assert len(method_map) == 1
+        assert 'GET' in method_map
+
         get_method = method_map['GET']
         get_resp = TestResponse()
         get_method({}, get_resp)
-        self.assertEqual(get_resp.status, '200 OK')
-        self.assertEqual(get_resp.json, {"method": "get"})
 
-        self.assertEqual(uri, '/foo')
+        assert get_resp.status == '200 OK'
+        assert get_resp.json == {"method": "get"}
 
-if __name__ == '__main__':
-    unittest.main()
+        assert uri == '/foo'
