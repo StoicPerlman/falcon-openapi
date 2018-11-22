@@ -1,5 +1,6 @@
 import json
 import yaml
+from pathlib import Path
 from inspect import stack
 from os.path import abspath, dirname
 from importlib.util import spec_from_file_location, module_from_spec
@@ -14,10 +15,13 @@ class OpenApiRouter(CompiledRouter):
         elif raw_yaml != '':
             self.openapi = yaml.load(raw_yaml)
         else:
+            if not Path(file_path).exists() and file_path == 'openapi-spec.yml':
+                file_path = 'openapi-spec.yaml'
+
             with open(file_path) as f:
                 if file_path.endswith('json'):
                         self.openapi = json.load(f)
-                else:
+                elif file_path.endswith('yml') or file_path.endswith('yaml'):
                     self.openapi = yaml.load(f)
 
         for path, http_methods in self.openapi['paths'].items():
