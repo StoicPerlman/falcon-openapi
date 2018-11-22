@@ -10,7 +10,7 @@ pip3 install falcon-openapi
 
 ## OpenApi Router
 
-Reads an openapi spec and provides automatic routing to Falcon resources. This is achieved by defining either an operationId or x-falcon-router property on an endpoint. This removes the need to define all endpoints in your main Falcon file. Instead just set the router to OpenApiRouter.
+Reads an openapi spec and provides automatic routing to Falcon resources. This is achieved by defining either an operationId or x-falcon property on an endpoint. This removes the need to define all endpoints in your main Falcon file. Instead just set the router to OpenApiRouter.
 
 This router inherits from the default Falcon CompiledRouter class, so it supports all methods available to the default router.
 
@@ -64,11 +64,11 @@ paths:
       operationId: controllers.foo.Foo.on_get
 ```
 
-I am unsure if operationId will make it into the final version. I may change this to only check for the x-falcon-router property. I plan on doing more research to determine if this an appropriate way to use the [operationId property](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#operationObject).
+I am unsure if operationId will make it into the final version. I may change this to only check for the x-falcon property. I plan on doing more research to determine if this an appropriate way to use the [operationId property](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#operationObject).
 
-### x-falcon-router
+### x-falcon
 
-The example below will route all `POST` `/foo` requests to the module `controllers.foo`, the class `Foo`, and the method `post_foo`. Note: the standard in Falcon is to use the naming scheme on_get, on_post, etc. This plugin will allow any method name to be used to handle the request. If no method name is defined in x-falcon-router, the plugin will attempt to route to the appropriate on_* method. Meaning in the example below, removing the `method: post_foo` would cause the router to attempt to find an `on_post` method in `Foo`.
+The example below will route all `POST` `/foo` requests to the module `controllers.foo`, the class `Foo`, and the method `post_foo`. Note: the standard in Falcon is to use the naming scheme on_get, on_post, etc. This plugin will allow any method name to be used to handle the request. If no method name is defined in x-falcon, the plugin will attempt to route to the appropriate on_* method. Meaning in the example below, removing the `method: post_foo` would cause the router to attempt to find an `on_post` method in `Foo`.
 
 ```yaml
 openapi: "3.0.0"
@@ -79,7 +79,7 @@ paths:
   /foo:
     post:
       summary: Do foo things
-      x-falcon-router:
+      x-falcon:
         module: controllers.foo
         class: Foo
         method: post_foo

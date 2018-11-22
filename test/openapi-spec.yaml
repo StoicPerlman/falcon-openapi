@@ -25,7 +25,7 @@ paths:
                 $ref: "#/components/schemas/Foo"
     post:
       summary: Do foo things
-      x-falcon-router:
+      x-falcon:
         module: controllers.foo
         class: Foo
       parameters:
@@ -42,7 +42,7 @@ paths:
                 $ref: "#/components/schemas/Foo"
     put:
       summary: Do foo things
-      x-falcon-router:
+      x-falcon:
         module: controllers.foo
         class: Foo
         method: do_a_put

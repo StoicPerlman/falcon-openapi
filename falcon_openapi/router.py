@@ -62,12 +62,12 @@ class OpenApiRouter(CompiledRouter):
     @staticmethod
     def __get_destination_info(definition, fallback):
         """Gets destination module, class, method, and filename from openapi 
-        method definition. Looks for either operationId or x-falcon-router 
+        method definition. Looks for either operationId or x-falcon 
         properties. If both are defined operationId takes precedence.
 
         fallback should be the http method this definition is responsible for.
         This is used to route to on_get, on_post, etc if no method defined in
-        x-falcon-router.
+        x-falcon.
         
         Returns tuple (module, class, method, file_name)"""
 
@@ -83,8 +83,8 @@ class OpenApiRouter(CompiledRouter):
             op_module = '.'.join(parts)
             op_file = caller_dir + '/'.join(parts) + '.py'
             return (op_module, op_method, op_class, op_file)
-        elif 'x-falcon-router' in definition:
-            falcon_router = definition['x-falcon-router']
+        elif 'x-falcon' in definition:
+            falcon_router = definition['x-falcon']
             op_module = falcon_router['module']
             op_class = falcon_router['class']
             parts = op_module.split('.')
@@ -97,4 +97,4 @@ class OpenApiRouter(CompiledRouter):
 
             return (op_module, op_method, op_class, op_file)
         else:
-            raise ValueError("No operationId or x-falcon-router found in definition")
+            raise ValueError("No operationId or x-falcon found in definition")
