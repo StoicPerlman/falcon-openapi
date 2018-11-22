@@ -1,6 +1,6 @@
 # Falcon OpenApi
 
-Falcon OpenApi is a set of plugins for the [Falcon Web Framework](https://github.com/falconry/falcon). This project is currently in alpha and still under development.
+Falcon OpenApi is a plugin for the [Falcon Web Framework](https://github.com/falconry/falcon).
 
 ### Install
 
@@ -84,6 +84,3 @@ paths:
         class: Foo
         method: post_foo
 ```
-## OpenApi Validator
-
-This plugin is still a work in progress.
