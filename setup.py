@@ -21,11 +21,5 @@ setup(
     install_requires=[
         'falcon',
         'pyyaml'
-    ],
-    extras_require={
-        'dev': [
-            'pytest',
-            'bumpversion'
-        ]
-    }
+    ]
 )
