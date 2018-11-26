@@ -10,17 +10,24 @@ from falcon.routing.compiled import CompiledRouter
 
 
 class OpenApiRouter(CompiledRouter):
-    def __init__(self, file_path='openapi-spec.yml', raw_json='', raw_yaml=''):
+    def __init__(self, file_path='', raw_json='', raw_yaml=''):
         super().__init__()
+
+        if file_path == '' and raw_json == '' and raw_yaml == '':
+            file_path = 'openapi-spec.yml'
+
+            if not Path(file_path).exists():
+                file_path = 'openapi-spec.yaml'
+
+                if not Path(file_path).exists():
+                    raise FileNotFoundError(
+                        'Unable to find openapi-spec.yml or openapi-spec.yaml')
 
         if raw_json != '':
             self.openapi = json.loads(raw_json)
         elif raw_yaml != '':
             self.openapi = yaml.load(raw_yaml)
         else:
-            if not Path(file_path).exists() and file_path == 'openapi-spec.yml':
-                file_path = 'openapi-spec.yaml'
-
             with open(file_path) as f:
                 if file_path.endswith('json'):
                     self.openapi = json.load(f)
