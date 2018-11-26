@@ -1,22 +1,24 @@
 import json
-import yaml
-import pytest
-
 import os
 import sys
+
+import pytest
+import yaml
+
 sys.path.insert(0, '..')
-from falcon_openapi import OpenApiRouter
+from falcon_openapi import OpenApiRouter  # isort:skip
 
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
+
 class TestResponse():
     json = ''
     status = ''
 
-class TestRouter():
 
+class TestRouter():
     def test_file_path(self):
         router = OpenApiRouter()
         (resource, method_map, _, uri) = router.find('/foo')
@@ -31,7 +33,7 @@ class TestRouter():
         get_method = method_map['GET']
         post_method = method_map['POST']
         put_method = method_map['PUT']
-        
+
         get_resp = TestResponse()
         post_resp = TestResponse()
         put_resp = TestResponse()
@@ -49,7 +51,7 @@ class TestRouter():
         assert put_resp.json == {"method": "put"}
 
         assert uri == '/foo'
-    
+
     def test_raw_json(self):
         spec = {
             'paths': {
@@ -92,7 +94,7 @@ class TestRouter():
         (resource, method_map, _, uri) = router.find('/foo')
 
         assert 'controllers.foo.Foo' in str(resource)
-        
+
         assert len(method_map) == 1
         assert 'GET' in method_map
 

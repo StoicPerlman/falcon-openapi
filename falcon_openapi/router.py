@@ -1,10 +1,13 @@
 import json
-import yaml
-from pathlib import Path
+from importlib.util import module_from_spec, spec_from_file_location
 from inspect import stack
+from logging import getLogger
 from os.path import abspath, dirname
-from importlib.util import spec_from_file_location, module_from_spec
+from pathlib import Path
+
+import yaml
 from falcon.routing.compiled import CompiledRouter
+
 
 class OpenApiRouter(CompiledRouter):
     def __init__(self, file_path='openapi-spec.yml', raw_json='', raw_yaml=''):
@@ -20,7 +23,7 @@ class OpenApiRouter(CompiledRouter):
 
             with open(file_path) as f:
                 if file_path.endswith('json'):
-                        self.openapi = json.load(f)
+                    self.openapi = json.load(f)
                 elif file_path.endswith('yml') or file_path.endswith('yaml'):
                     self.openapi = yaml.load(f)
 
@@ -29,10 +32,12 @@ class OpenApiRouter(CompiledRouter):
 
             for http_method, definition in http_methods.items():
                 try:
-                    (dest_module,
-                    dest_method, 
-                    dest_class,
-                    dest_file) = self.__get_destination_info(definition, http_method)
+                    (
+                        dest_module,
+                        dest_method,
+                        dest_class,
+                        dest_file,
+                    ) = self.__get_destination_info(definition, http_method)
                 except:
                     continue
 
@@ -58,7 +63,7 @@ class OpenApiRouter(CompiledRouter):
                 Class = router_map['class']
                 method_map = router_map['method_map']
                 self.add_route(path, method_map, Class)
-    
+
     @staticmethod
     def __get_destination_info(definition, fallback):
         """Gets destination module, class, method, and filename from openapi 
