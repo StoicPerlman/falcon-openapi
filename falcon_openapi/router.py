@@ -26,13 +26,13 @@ class OpenApiRouter(CompiledRouter):
         if raw_json != '':
             self.openapi = json.loads(raw_json)
         elif raw_yaml != '':
-            self.openapi = yaml.load(raw_yaml)
+            self.openapi = yaml.safe_load(raw_yaml)
         else:
             with open(file_path) as f:
                 if file_path.endswith('json'):
                     self.openapi = json.load(f)
                 elif file_path.endswith('yml') or file_path.endswith('yaml'):
-                    self.openapi = yaml.load(f)
+                    self.openapi = yaml.safe_load(f)
 
         for path, http_methods in self.openapi['paths'].items():
             openapi_map = {}
