@@ -14,7 +14,7 @@ Reads an openapi spec and provides automatic routing to Falcon resources. This i
 
 This router inherits from the default Falcon CompiledRouter class, so it supports all methods available to the default router.
 
-Supports json files, yaml files, raw json strings, and raw yaml strings. If no params are specified the plugin will attempt to find `openapi-spec.yml` in the same directory.
+Supports json files, yaml files, raw json strings, and raw yaml strings. If no params are specified the plugin will attempt to find `openapi-spec.yml` or `openapi-spec.yaml` in the same directory.
 
 ```python
 import falcon
