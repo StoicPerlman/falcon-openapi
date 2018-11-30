@@ -15,11 +15,6 @@ setup(
     author_email='sam@skleiner.com',
     license='MIT',
     url='https://github.com/StoicPerlman/falcon-openapi/',
-    download_url = 'https://github.com/StoicPerlman/falcon-openapi/archive/0.4.0.tar.gz',
-    keywords = ['falcon', 'openapi', 'api'],
+    keywords=['falcon', 'openapi', 'api'],
     packages=['falcon_openapi'],
-    install_requires=[
-        'falcon',
-        'pyyaml'
-    ]
-)
+    install_requires=['falcon', 'pyyaml'])
