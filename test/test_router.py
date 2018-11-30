@@ -106,3 +106,61 @@ class TestRouter():
         assert get_resp.json == {"method": "get"}
 
         assert uri == '/foo'
+
+    def test_base_path_v3(self):
+        spec = {
+            'servers': [{
+                'url': 'http://localhost/v1'
+            }],
+            'paths': {
+                '/foo': {
+                    'get': {
+                        'operationId': 'controllers.foo.Foo.on_get'
+                    }
+                }
+            }
+        }
+
+        router = OpenApiRouter(raw_json=json.dumps(spec))
+        (resource, method_map, _, uri) = router.find('/v1/foo')
+
+        assert 'controllers.foo.Foo' in str(resource)
+        assert len(method_map) == 1
+        assert 'GET' in method_map
+
+        get_method = method_map['GET']
+        get_resp = TestResponse()
+        get_method({}, get_resp)
+
+        assert get_resp.status == '200 OK'
+        assert get_resp.json == {"method": "get"}
+
+        assert uri == '/v1/foo'
+
+    def test_base_path_v2(self):
+        spec = {
+            'basePath': '/v1',
+            'paths': {
+                '/foo': {
+                    'get': {
+                        'operationId': 'controllers.foo.Foo.on_get'
+                    }
+                }
+            }
+        }
+
+        router = OpenApiRouter(raw_json=json.dumps(spec))
+        (resource, method_map, _, uri) = router.find('/v1/foo')
+
+        assert 'controllers.foo.Foo' in str(resource)
+        assert len(method_map) == 1
+        assert 'GET' in method_map
+
+        get_method = method_map['GET']
+        get_resp = TestResponse()
+        get_method({}, get_resp)
+
+        assert get_resp.status == '200 OK'
+        assert get_resp.json == {"method": "get"}
+
+        assert uri == '/v1/foo'

@@ -4,8 +4,6 @@ info:
   title: Falcon Openapi Demo
   license:
     name: MIT
-servers:
-  - url: http://localhost/v1
 paths:
   /foo:
     get:
