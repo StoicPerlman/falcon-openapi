@@ -9,16 +9,17 @@ from urllib.parse import urlparse
 import yaml
 from falcon.routing.compiled import CompiledRouter
 
+from falcon_openapi.openapi import OpenApi
+
 
 class OpenApiRouter(CompiledRouter):
     def __init__(self, file_path='', raw_json='', raw_yaml=''):
         super().__init__()
 
-        (self.openapi, self.base_path) = self.__load_spec(
-            file_path, raw_json, raw_yaml)
+        self.openapi = OpenApi(file_path=file_path, raw_json=raw_json, raw_yaml=raw_yaml)
 
-        for path, http_methods in self.openapi['paths'].items():
-            path = self.base_path + path
+        for path, http_methods in self.openapi.spec['paths'].items():
+            path = self.openapi.base_path + path
             openapi_map = {}
 
             for http_method, definition in http_methods.items():
@@ -33,7 +34,7 @@ class OpenApiRouter(CompiledRouter):
                     continue
 
                 http_method = http_method.upper()
-                class_name = dest_module + dest_class
+                class_name = f'{dest_module}.{dest_class}'
 
                 if class_name not in openapi_map:
                     mod_spec = spec_from_file_location(dest_module, dest_file)
@@ -55,46 +56,7 @@ class OpenApiRouter(CompiledRouter):
                 method_map = router_map['method_map']
                 self.add_route(path, method_map, Class)
 
-    @staticmethod
-    def __load_spec(file_path='', raw_json='', raw_yaml=''):
-
-        if file_path == '' and raw_json == '' and raw_yaml == '':
-            file_path = 'openapi-spec.yml'
-
-            if not Path(file_path).exists():
-                file_path = 'openapi-spec.yaml'
-
-                if not Path(file_path).exists():
-                    raise FileNotFoundError(
-                        'Unable to find openapi-spec.yml or openapi-spec.yaml')
-
-        if raw_json != '':
-            openapi = json.loads(raw_json)
-        elif raw_yaml != '':
-            openapi = yaml.safe_load(raw_yaml)
-        else:
-            with open(file_path) as f:
-                if file_path.endswith('json'):
-                    openapi = json.load(f)
-                elif file_path.endswith('yml') or file_path.endswith('yaml'):
-                    openapi = yaml.safe_load(f)
-
-        path = ''
-
-        if 'servers' in openapi and isinstance(openapi['servers'], list):
-            servers = openapi['servers']
-
-            for server in servers:
-                if 'url' in server:
-                    url = urlparse(server['url'])
-                    path = url.path
-        elif 'basePath' in openapi and isinstance(openapi['basePath'], str):
-            path = openapi['basePath']
-
-        return openapi, path
-
-    @staticmethod
-    def __get_destination_info(definition, fallback):
+    def __get_destination_info(self, definition, fallback):
         """Gets destination module, class, method, and filename from openapi 
         method definition. Looks for either operationId or x-falcon 
         properties. If both are defined operationId takes precedence.
@@ -105,24 +67,20 @@ class OpenApiRouter(CompiledRouter):
         
         Returns tuple (module, class, method, file_name)"""
 
-        # gets the file and dir of whomever instantiated this object
-        caller_file = abspath((stack()[2])[1])
-        caller_dir = dirname(caller_file) + '/'
-
         if 'operationId' in definition:
             operationId = definition['operationId']
             parts = operationId.split('.')
             op_method = parts.pop()
             op_class = parts.pop()
             op_module = '.'.join(parts)
-            op_file = caller_dir + '/'.join(parts) + '.py'
+            op_file = self.openapi.app_dir + '/'.join(parts) + '.py'
 
         elif 'x-falcon' in definition:
             falcon_router = definition['x-falcon']
             op_module = falcon_router['module']
             op_class = falcon_router['class']
             parts = op_module.split('.')
-            op_file = caller_dir + '/'.join(parts) + '.py'
+            op_file = self.openapi.app_dir + '/'.join(parts) + '.py'
 
             if 'method' not in falcon_router:
                 op_method = 'on_' + fallback.lower()
