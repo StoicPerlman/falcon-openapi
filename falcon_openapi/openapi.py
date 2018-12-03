@@ -16,11 +16,11 @@ class OpenApi():
     that was instantiated inside falcon's main app file 
     """
 
-    def __init__(self, file_path='', raw_json='', raw_yaml=''):
+    def __init__(self, file_path=None, raw_json=None, raw_yaml=None, raw_dict=None):
 
         self.app_dir = self.get_app()
 
-        if file_path == '' and raw_json == '' and raw_yaml == '':
+        if not file_path and not raw_json and not raw_yaml and not raw_dict:
             file_path = self.app_dir + 'openapi-spec.yml'
             self.file_path = file_path
 
@@ -31,17 +31,19 @@ class OpenApi():
                 if not Path(file_path).exists():
                     raise FileNotFoundError(OPENAPI_FILE_ERROR.format(self.app_dir))
 
-        if raw_json != '':
+        if raw_json:
             self.spec = json.loads(raw_json)
-        elif raw_yaml != '':
+        elif raw_yaml:
             self.spec = yaml.safe_load(raw_yaml)
-        else:
+        elif file_path:
             self.file_path = file_path
             with open(file_path) as f:
                 if file_path.endswith('json'):
                     self.spec = json.load(f)
                 elif file_path.endswith('yml') or file_path.endswith('yaml'):
                     self.spec = yaml.safe_load(f)
+        elif raw_dict:
+            self.spec = raw_dict
 
         self.base_path = ''
 
