@@ -13,10 +13,10 @@ from falcon_openapi.openapi import OpenApi
 
 
 class OpenApiRouter(CompiledRouter):
-    def __init__(self, file_path='', raw_json='', raw_yaml=''):
+    def __init__(self, **kwargs):
         super().__init__()
 
-        self.openapi = OpenApi(file_path=file_path, raw_json=raw_json, raw_yaml=raw_yaml)
+        self.openapi = OpenApi(**kwargs)
 
         for path, http_methods in self.openapi.spec['paths'].items():
             path = self.openapi.base_path + path
