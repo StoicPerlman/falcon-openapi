@@ -7,7 +7,13 @@ venv:
 	pipenv shell
 
 test:
-	python -m pytest
+	pytest --disable-warnings
+
+test-print:
+	pytest -s --disable-warnings
+
+test-warnings:
+	pytest
 
 venv-init:
 	pipenv install -d
