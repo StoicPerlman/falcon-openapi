@@ -5,7 +5,8 @@ import sys
 import pytest
 import yaml
 
-sys.path.insert(0, '..')
+module_dir = os.path.dirname(os.path.abspath(__file__)) + '/../..'
+sys.path.insert(0, module_dir)
 from falcon_openapi import OpenApiRouter  # isort:skip
 
 abspath = os.path.abspath(__file__)
@@ -53,15 +54,7 @@ class TestRouter():
         assert uri == '/foo'
 
     def test_raw_json(self):
-        spec = {
-            'paths': {
-                '/foo': {
-                    'get': {
-                        'operationId': 'controllers.foo.Foo.on_get'
-                    }
-                }
-            }
-        }
+        spec = {'paths': {'/foo': {'get': {'operationId': 'controllers.foo.Foo.on_get'}}}}
 
         router = OpenApiRouter(raw_json=json.dumps(spec))
         (resource, method_map, _, uri) = router.find('/foo')
@@ -80,15 +73,7 @@ class TestRouter():
         assert uri == '/foo'
 
     def test_raw_yaml(self):
-        spec = {
-            'paths': {
-                '/foo': {
-                    'get': {
-                        'operationId': 'controllers.foo.Foo.on_get'
-                    }
-                }
-            }
-        }
+        spec = {'paths': {'/foo': {'get': {'operationId': 'controllers.foo.Foo.on_get'}}}}
 
         router = OpenApiRouter(raw_yaml=yaml.dump(spec))
         (resource, method_map, _, uri) = router.find('/foo')
