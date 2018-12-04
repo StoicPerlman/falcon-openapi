@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Falcon-OpenAPi example
+  contact:
+    name: Sam Kleiner
+    email: sam@skleiner.com
+  license:
+    name: MIT
+  description: Demo for falcon-openapi
+servers:
+  - url: "http://localhost"
+    description: Local Dev
+paths:
+  /:
+    get:
+      summary: Demo get
+      x-falcon:
+        module: controllers.demo
+        class: Demo
+        method: get_all
+      parameters:
+        - name: q
+          description: Query to search for
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 256
+            pattern: "[a-zA-Z]+"
+        - name: limit
+          schema:
+            type: int
+            minimum: 1
+            maximum: 5
+            default: 3
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAllResources"
+  /{id}:
+    get:
+      summary: Query gigmapr for all US results
+      x-falcon:
+        module: controllers.demo
+        class: Demo
+        method: get_id
+      parameters:
+        - name: id
+          description: Resource ID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/State"
+
+components:
+  schemas:
+    GetAllResources:
+      type: array
+      description: Get all resources
+      items:
+        type: object
+        properties:
+          key:
+            type: string
+            description: State abbreviation
+          value:
+            type: integer
+            description: Number of matching documents
+    GetResource:
+      type: object
+      properties:
+        cities:
+          type: array
+          description: Job count bucketed by city
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                description: City name
+              value:
+                type: integer
+                description: Number of matching documents
