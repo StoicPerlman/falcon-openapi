@@ -7,6 +7,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import yaml
+from falcon import routing
 from falcon.routing.compiled import CompiledRouter
 
 
@@ -53,6 +54,7 @@ class OpenApiRouter(CompiledRouter):
             for router_map in openapi_map.values():
                 Class = router_map['class']
                 method_map = router_map['method_map']
+                routing.set_default_responders(method_map)
                 self.add_route(path, method_map, Class)
 
     @staticmethod
