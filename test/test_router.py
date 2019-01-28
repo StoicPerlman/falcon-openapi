@@ -25,10 +25,11 @@ class TestRouter():
 
         assert 'controllers.foo.Foo' in str(resource)
 
-        assert len(method_map) == 3
+        assert len(method_map) >= 4
         assert 'GET' in method_map
         assert 'POST' in method_map
         assert 'PUT' in method_map
+        assert 'OPTIONS' in method_map
 
         get_method = method_map['GET']
         post_method = method_map['POST']
@@ -67,8 +68,9 @@ class TestRouter():
         (resource, method_map, _, uri) = router.find('/foo')
 
         assert 'controllers.foo.Foo' in str(resource)
-        assert len(method_map) == 1
+        assert len(method_map) >= 2
         assert 'GET' in method_map
+        assert 'OPTIONS' in method_map
 
         get_method = method_map['GET']
         get_resp = TestResponse()
@@ -95,8 +97,9 @@ class TestRouter():
 
         assert 'controllers.foo.Foo' in str(resource)
 
-        assert len(method_map) == 1
+        assert len(method_map) >= 2
         assert 'GET' in method_map
+        assert 'OPTIONS' in method_map
 
         get_method = method_map['GET']
         get_resp = TestResponse()
@@ -125,8 +128,9 @@ class TestRouter():
         (resource, method_map, _, uri) = router.find('/v1/foo')
 
         assert 'controllers.foo.Foo' in str(resource)
-        assert len(method_map) == 1
+        assert len(method_map) >= 2
         assert 'GET' in method_map
+        assert 'OPTIONS' in method_map
 
         get_method = method_map['GET']
         get_resp = TestResponse()
@@ -153,8 +157,9 @@ class TestRouter():
         (resource, method_map, _, uri) = router.find('/v1/foo')
 
         assert 'controllers.foo.Foo' in str(resource)
-        assert len(method_map) == 1
+        assert len(method_map) >= 2
         assert 'GET' in method_map
+        assert 'OPTIONS' in method_map
 
         get_method = method_map['GET']
         get_resp = TestResponse()
