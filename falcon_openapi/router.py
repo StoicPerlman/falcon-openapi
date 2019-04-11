@@ -2,7 +2,7 @@ import json
 from importlib.util import module_from_spec, spec_from_file_location
 from inspect import stack
 from logging import getLogger
-from os.path import abspath, dirname
+from os.path import basename, abspath, dirname
 from pathlib import Path
 from urllib.parse import urlparse
 
