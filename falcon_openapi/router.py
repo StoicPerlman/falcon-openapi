@@ -110,9 +110,13 @@ class OpenApiRouter(CompiledRouter):
         # gets the file and dir of whomever instantiated this object
         caller_file = abspath((stack()[2])[1])
         caller_dir = dirname(caller_file) + '/'
+        caller_module = basename(dirname(caller_file))
 
         if 'operationId' in definition:
             operationId = definition['operationId']
+            if operationId[0] == '.':
+                operationId = caller_module + operationId
+                caller_dir = caller_dir[:-len(caller_module)-1]
             parts = operationId.split('.')
             op_method = parts.pop()
             op_class = parts.pop()
