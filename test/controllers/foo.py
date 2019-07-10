@@ -11,7 +11,7 @@ class Foo(object):
         resp.status = falcon.HTTP_200
         resp.json = {"method": "post"}
 
-    def do_a_put(self, req, resp):
+    def on_put(self, req, resp):
         """Handles PUT requests"""
         resp.status = falcon.HTTP_418
         resp.json = {"method": "put"}

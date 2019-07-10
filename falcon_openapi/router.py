@@ -55,7 +55,7 @@ class OpenApiRouter(CompiledRouter):
                 Class = router_map['class']
                 method_map = router_map['method_map']
                 routing.set_default_responders(method_map)
-                self.add_route(path, method_map, Class)
+                self.add_route(path, Class)
 
     @staticmethod
     def __load_spec(file_path='', raw_json='', raw_yaml=''):
@@ -97,14 +97,14 @@ class OpenApiRouter(CompiledRouter):
 
     @staticmethod
     def __get_destination_info(definition, fallback):
-        """Gets destination module, class, method, and filename from openapi 
-        method definition. Looks for either operationId or x-falcon 
+        """Gets destination module, class, method, and filename from openapi
+        method definition. Looks for either operationId or x-falcon
         properties. If both are defined operationId takes precedence.
 
         fallback should be the http method this definition is responsible for.
         This is used to route to on_get, on_post, etc if no method defined in
         x-falcon.
-        
+
         Returns tuple (module, class, method, file_name)"""
 
         # gets the file and dir of whomever instantiated this object
