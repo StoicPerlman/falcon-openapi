@@ -68,7 +68,7 @@ I am unsure if operationId will make it into the final version. I may change thi
 
 ### x-falcon
 
-The example below will route all `POST` `/foo` requests to the module `controllers.foo`, the class `Foo`, and the method `post_foo`. Note: the standard in Falcon is to use the naming scheme on_get, on_post, etc. This plugin will allow any method name to be used to handle the request. If no method name is defined in x-falcon, the plugin will attempt to route to the appropriate on_* method. Meaning in the example below, removing the `method: post_foo` would cause the router to attempt to find an `on_post` method in `Foo`.
+The example below will route all `POST` `/foo` requests to the module `controllers.foo`, the class `Foo`, and the method `on_post`. Note: the standard in Falcon is to use the naming scheme on_get, on_post, etc. If no method name is defined in x-falcon, the plugin will attempt to route to the appropriate on_* method.
 
 ```yaml
 openapi: "3.0.0"
@@ -82,5 +82,5 @@ paths:
       x-falcon:
         module: controllers.foo
         class: Foo
-        method: post_foo
+        method: on_post
 ```
