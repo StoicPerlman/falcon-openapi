@@ -18,7 +18,7 @@ paths:
       responses:
         200:
           content:
-            application/json:    
+            application/json:
               schema:
                 $ref: "#/components/schemas/Foo"
     post:
@@ -35,7 +35,7 @@ paths:
       responses:
         200:
           content:
-            application/json:    
+            application/json:
               schema:
                 $ref: "#/components/schemas/Foo"
     put:
@@ -43,7 +43,6 @@ paths:
       x-falcon:
         module: controllers.foo
         class: Foo
-        method: do_a_put
       parameters:
         - name: limit
           in: query
@@ -53,7 +52,7 @@ paths:
       responses:
         200:
           content:
-            application/json:    
+            application/json:
               schema:
                 $ref: "#/components/schemas/Foo"
 components:
