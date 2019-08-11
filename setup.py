@@ -7,7 +7,7 @@ with open("README.md") as f:
 setup(
     name="falcon-openapi",
     python_requires=">3.5.0",
-    version="0.5.0",
+    version="0.5.1",
     description="Falcon router to map openapi spec to resources",
     long_description=readme,
     long_description_content_type="text/markdown",
