@@ -1,0 +1,11 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Falcon Openapi Example
+  license:
+    name: MIT
+paths:
+  /controller:
+    get:
+      summary: summary
+      operationId: api.controller.controller1.on_get
