@@ -61,7 +61,7 @@ paths:
   /foo:
     get:
       summary: Do foo things
-      operationId: controllers.foo.Foo.on_get
+      operationId: .controllers.foo.Foo.on_get
 ```
 
 I am unsure if operationId will make it into the final version. I may change this to only check for the x-falcon property. I plan on doing more research to determine if this an appropriate way to use the [operationId property](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#operationObject).
