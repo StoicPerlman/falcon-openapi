@@ -8,6 +8,7 @@ twine = "*"
 bumpversion = "*"
 pytest = "*"
 pylint = "*"
+black = "==19.3b0"
 
 [packages]
 falcon = "*"
