@@ -1,8 +1,7 @@
 import json
 from importlib.util import module_from_spec, spec_from_file_location
 from inspect import stack
-from logging import getLogger
-from os.path import abspath, dirname
+from os.path import basename, abspath, dirname
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -16,42 +15,49 @@ class OpenApiRouter(CompiledRouter):
         super().__init__()
 
         (self.openapi, self.base_path) = self.__load_spec(file_path, raw_json, raw_yaml)
+    
+    def _process_http_methods(self, http_methods):
+        """
+        Process http methods from OpenAPI sprecifications
+        """
+        openapi_map = {}
+        for http_method, definition in http_methods.items():
+            try:
+                (dest_module, dest_method, dest_class, dest_file) = self.__get_destination_info(
+                    definition, http_method
+                )
+            except:
+                continue
 
-        for path, http_methods in self.openapi["paths"].items():
-            path = self.base_path + path
-            openapi_map = {}
+            http_method = http_method.upper()
+            class_name = dest_module + dest_class
 
-            for http_method, definition in http_methods.items():
-                try:
-                    (dest_module, dest_method, dest_class, dest_file) = self.__get_destination_info(
-                        definition, http_method
-                    )
-                except:
-                    continue
+            if class_name not in openapi_map:
+                mod_spec = spec_from_file_location(dest_module, dest_file)
+                module = module_from_spec(mod_spec)
+                mod_spec.loader.exec_module(module)
+                Class = getattr(module, dest_class)()
 
-                http_method = http_method.upper()
-                class_name = dest_module + dest_class
+                openapi_map[class_name] = {}
+                openapi_map[class_name]["class"] = Class
+                openapi_map[class_name]["method_map"] = {}
 
-                if class_name not in openapi_map:
-                    mod_spec = spec_from_file_location(dest_module, dest_file)
-                    module = module_from_spec(mod_spec)
-                    mod_spec.loader.exec_module(module)
-                    Class = getattr(module, dest_class)()
-
-                    openapi_map[class_name] = {}
-                    openapi_map[class_name]["class"] = Class
-                    openapi_map[class_name]["method_map"] = {}
-
-                method_map = openapi_map[class_name]["method_map"]
-                Class = openapi_map[class_name]["class"]
-                Method = getattr(Class, dest_method)
-                method_map[http_method] = Method
-
-            for router_map in openapi_map.values():
-                Class = router_map["class"]
-                method_map = router_map["method_map"]
-                routing.set_default_responders(method_map)
-                self.add_route(path, Class)
+            method_map = openapi_map[class_name]["method_map"]
+            Class = openapi_map[class_name]["class"]
+            Method = getattr(Class, dest_method)
+            method_map[http_method] = Method
+        
+        return openapi_map
+    
+    def _add_route(self, openapi_map, path, **kwargs):
+        """
+        Add route from OpenAPI map
+        """
+        for router_map in openapi_map.values():
+            Class = router_map["class"]
+            method_map = router_map["method_map"]
+            routing.set_default_responders(method_map)
+            self.add_route(path, Class, **kwargs)
 
     @staticmethod
     def __load_spec(file_path="", raw_json="", raw_yaml=""):
@@ -105,9 +111,13 @@ class OpenApiRouter(CompiledRouter):
         # gets the file and dir of whomever instantiated this object
         caller_file = abspath((stack()[2])[1])
         caller_dir = dirname(caller_file) + "/"
+        caller_module = basename(dirname(caller_file))
 
         if "operationId" in definition:
             operationId = definition["operationId"]
+            if operationId[0] == '.':
+                operationId = caller_module + operationId
+                caller_dir = caller_dir[:-len(caller_module)-1]
             parts = operationId.split(".")
             op_method = parts.pop()
             op_class = parts.pop()
@@ -130,3 +140,31 @@ class OpenApiRouter(CompiledRouter):
             raise ValueError("No operationId or x-falcon found in definition")
 
         return (op_module, op_method, op_class, op_file)
+    
+
+class OpenApiSyncRouter(OpenApiRouter):
+    
+    def __init__(self, file_path="", raw_json="", raw_yaml=""):
+        super().__init__(file_path=file_path, raw_json=raw_json, raw_yaml=raw_yaml)
+
+        for path, http_methods in self.openapi["paths"].items():
+            path = self.base_path + path
+            openapi_map = self._process_http_methods(http_methods)
+            self._add_route(openapi_map, path)
+
+
+class OpenApiAsyncRouter(OpenApiRouter):
+    
+    def __init__(self, file_path="", raw_json="", raw_yaml=""):
+        super().__init__(file_path=file_path, raw_json=raw_json, raw_yaml=raw_yaml)
+
+        for path, http_methods in self.openapi["paths"].items():
+            path = self.base_path + path
+            openapi_map = self._process_http_methods(http_methods)
+            # Inject an extra kwarg so that the compiled router
+            # will know to validate the responder methods to make sure they
+            # are async coroutines.
+            kwargs = {
+                '_asgi': True
+            }
+            self._add_route(openapi_map, path, **kwargs)

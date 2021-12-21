@@ -1,3 +1,3 @@
-from .router import OpenApiRouter
+from .router import OpenApiSyncRouter, OpenApiAsyncRouter
 
-__version__ = "0.5.1"
+__version__ = "0.5.2"
