@@ -16,11 +16,14 @@ This router inherits from the default Falcon CompiledRouter class, so it support
 
 Supports json files, yaml files, raw json strings, and raw yaml strings. If no params are specified the plugin will attempt to find `openapi-spec.yml` or `openapi-spec.yaml` in the current working directory (see example for structure).
 
+Sync Example
+-------------
 ```python
+
 import falcon
 import json
 import yaml
-from falcon_openapi import OpenApiRouter
+from falcon_openapi import OpenApiSyncRouter
 
 spec = {
     'paths': {
@@ -34,17 +37,53 @@ spec = {
 
 # load from file
 app = falcon.API(
-    router=OpenApiRouter(file_path='openapi-spec.yml')
+    router=OpenApiSyncRouter(file_path='openapi-spec.yml')
 )
 
 # load from raw json
 app = falcon.API(
-    router=OpenApiRouter(raw_json=json.dumps(spec))
+    router=OpenApiSyncRouter(raw_json=json.dumps(spec))
 )
 
 # load from raw yaml
 app = falcon.API(
-    router=OpenApiRouter(raw_yaml=yaml.dump(spec))
+    router=OpenApiSyncRouter(raw_yaml=yaml.dump(spec))
+)
+```
+
+Async Example
+-------------
+```python
+```python
+
+import falcon
+import json
+import yaml
+from falcon_openapi import OpenApiAsyncRouter
+
+spec = {
+    'paths': {
+        '/foo': {
+            'get': {
+                'operationId': 'controllers.foo.Foo.on_get'
+            }
+        }
+    }
+}
+
+# load from file
+app = falcon.API(
+    router=OpenApiAsyncRouter(file_path='openapi-spec.yml')
+)
+
+# load from raw json
+app = falcon.API(
+    router=OpenApiAsyncRouter(raw_json=json.dumps(spec))
+)
+
+# load from raw yaml
+app = falcon.API(
+    router=OpenApiAsyncRouter(raw_yaml=yaml.dump(spec))
 )
 ```
 
