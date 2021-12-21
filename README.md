@@ -54,7 +54,6 @@ app = falcon.API(
 Async Example
 -------------
 ```python
-```python
 
 import falcon
 import json
